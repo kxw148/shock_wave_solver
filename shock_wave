@@ -1,0 +1,338 @@
+clear, clc
+
+%global values 
+global gamma;
+global Ae;
+global a_star_ratio_diffuser
+global A_nozzle;
+global A_Diffuser_ss_avail
+
+%givens 
+Mach_testsection=input("please enter a mach number in test section");
+Temp_testsection=input("please enter a static tempature in kelvin that corolates height at atmospheric conditions");
+Pressure_testsection=input("please enter a static pressure in pa that corolates height at atmospheric conditions");
+gas_constant=input("enter gas constant value in m^2/s^2*K");
+gamma=input("enter desired specific heat ratio");
+D=input("please enter a value for the Diameter of the test section in meters");
+price=.15;
+h=1;
+
+% known Areas
+Aenter=((pi/4)*(1.8288)^2);
+Ae=2*((pi/4)*(1.8288)^2);
+disp("")
+disp("")
+
+%solving for total pressure ratio in test section  
+Total_pressure_ratio_testsection=(((gamma+1)*Mach_testsection^2)/((gamma-1)*Mach_testsection^2+2))^((gamma)/(gamma-1))*(((gamma+1)/(2*gamma*Mach_testsection^2-(gamma-1))))^((1)/(gamma-1));
+disp("this is the ratio of total pressures")
+disp(Total_pressure_ratio_testsection)
+disp("");
+disp("")
+
+
+%solving for total tempature value throughout wind tunnel in kelvin 
+To=Temp_testsection*(1+(((gamma-1)/2)*Mach_testsection^2));
+disp("this is the total temp in the test section in kelvin")
+disp(To)
+disp("")
+disp("")
+
+%solving for total pressure valvue in test section in pa 
+Po1=Pressure_testsection*(1+(((gamma-1)/2)*Mach_testsection^2))^((gamma/(gamma-1)));
+disp("this is the total pressure in the test section")
+disp(Po1)
+disp("")
+disp("")
+
+%solving for the mass flow rate in kg/s
+m_dot=((Pressure_testsection)/(gas_constant*Temp_testsection))*Mach_testsection*sqrt(gamma*gas_constant*Temp_testsection)*(pi/4)*(D)^2;
+disp("this is the mass flow rate in kg/s")
+disp(m_dot)
+disp("")
+disp("")
+
+%solving for the mass flow rate in lbm/s the value of 2.205 is a standard conversion factor between kg/s and lbm/s
+m_dot_english=m_dot*2.205;
+disp("this is the mass flow rate in lbm/s")
+disp(m_dot_english)
+disp("")
+disp("") 
+
+%solving initially for the A_nozzle in meters and then converting to feet
+%and inches
+A_nozzle=(m_dot*sqrt(To))/(Po1*sqrt((gamma/gas_constant)*((2/(gamma+1))^((gamma+1)/(gamma-1)))));
+A_nozzle_english_in=A_nozzle*3.281*3.281*144;
+A_nozzle_english_ft=A_nozzle*3.281*3.281;
+
+
+%Solving for Diamter of nozzle in meters 
+D_nozzle=sqrt(A_nozzle*(4/pi));
+disp("this is the nozzle diameter in meters")
+disp(D_nozzle)
+disp("")
+disp("")
+ 
+%Solving for Diamter of nozzle in ft 
+D_nozzle_english=D_nozzle*3.281;
+disp("this is the diameter of the nozzle in feet")
+disp(D_nozzle_english)
+disp("")
+disp("")
+ 
+
+%change in pressure caused by oblique shocks in test section
+Po2_ss=.90*Po1;
+disp("at Steady state the 10% decrease in total pressure is equal to")
+disp(Po2_ss)
+disp("")
+disp("")
+
+%solving for Po after shock at steady state
+disp("this is total pressure ratio across shock in throat at steady state")
+Po_after_shock=Po2_ss*Total_pressure_ratio_testsection;
+disp(Po_after_shock)
+
+%solving for area of diffuser at start up conditions in m^2 
+A_Diffuser_su=(Po1/Po_after_shock)*A_nozzle;
+disp("this is the diffuser area in meters for startup")
+disp(A_Diffuser_su)
+disp("")
+disp("")
+
+%solving for diameter of diffuser at start up conditions in meters 
+disp("this is the diffuser diamter in meters for startup")
+D_Diffuser_su=sqrt(A_Diffuser_su*(4/pi));
+disp(D_Diffuser_su)
+disp("")
+disp("")
+
+%solving for diamter of diffuser at start up conditions in ft
+disp("this is the diffuser diamter in feet for startup")
+D_Diffuser_english_su=D_Diffuser_su*3.281;
+disp(D_Diffuser_english_su)
+disp("")
+disp("")
+
+%solving for availiable diameter with travel in feet 
+disp("this is the diameter in feet with .3ft travel in ft")
+D_Diffuser_english_su_avail=ceil(D_Diffuser_english_su/.3)*.3;
+disp(D_Diffuser_english_su_avail)
+disp("")
+disp("")
+
+%solving for availiable diameter with travel in meter
+disp("this is the diameter in meters with .3ft travel in meters")
+D_Diffuser_su_avail=ceil(D_Diffuser_su/.09144)*.09144;
+disp(D_Diffuser_su_avail)
+disp("")
+disp("")
+
+%solving for the availiable area in ft^2 
+disp("this is the area availiable to meet travel .3 requierments in feet")
+A_Diffuser_su_english_avail=(pi/4)*(D_Diffuser_english_su_avail)^2; 
+disp(A_Diffuser_su_english_avail)
+disp("")
+disp("")
+
+%solving for the availible area in m^2 
+disp("this is the area availiable to meet travel .3 requierments in meters")
+A_Diffuser_su_avail=A_Diffuser_su_english_avail/(3.281*3.281);
+disp(A_Diffuser_su_avail)
+disp("")
+disp("")
+
+%solving for area of Diffuser at steady state in m^2 
+A_Diffuser_ss=(A_nozzle)*(Po1/Po2_ss);
+disp("this is the area of the diffuser in m^2")
+disp(A_Diffuser_ss);
+disp("")
+disp("")
+
+%solving for area of Diffuser at steady state in in^2
+disp("this is the area of the diffuser in in^2")
+A_Diffuser_english_ss_in=A_Diffuser_ss*3.281*3.281*144;
+disp(A_Diffuser_english_ss_in)
+disp("")
+disp("")
+
+%solving for area of Diffuser at steady state in ft^2
+disp("this is the area of the diffuser in ft^2")
+A_Diffuser_english_ss=A_Diffuser_ss*3.281*3.281;
+disp(A_Diffuser_english_ss)
+disp("")
+disp("")
+
+%solving for diffuser diameter at steady state in meters 
+D_Diffuser_ss=sqrt(A_Diffuser_ss*(4/pi));
+disp("The Diameter Diffuser in meters at steady state is")
+disp(D_Diffuser_ss)
+disp("")
+disp("")
+
+%solving for diffuser diameter at steady state in feet 
+D_Diffuser_english_ss=D_Diffuser_ss*3.281;
+disp("The Diffuser Diameter at steady state in ft")
+disp(D_Diffuser_english_ss)
+disp("")
+disp("")
+
+%solving for diffuser diameter at steady state in inches 
+D_Diffuser_english_ss_inches=D_Diffuser_english_ss*12;
+disp("the Diffuser Diameter at steady state in inches")
+disp(D_Diffuser_english_ss_inches)
+disp("")
+disp("")
+
+%solving for diameter with availiable travel in feet
+disp("value of diameter that can be reached with .3ft of travel in feet") 
+D_Diffuser_english_ss_avail=ceil(D_Diffuser_english_ss/.3)*.3;
+disp(D_Diffuser_english_ss_avail)
+disp("")
+disp("")
+
+
+%solving for the diameter availiable with .3 ft travel in meter 
+D_Diffuser_ss_avail= (D_Diffuser_english_ss_avail)/3.281;
+disp("Availiable travel in diffuser in meters")
+disp(D_Diffuser_ss_avail)
+disp("")
+disp("")
+
+
+%solving for the diameter availiable with .3 ft travel in inches  
+D_Diffuser_english_ss_avail_inches=(D_Diffuser_english_ss_avail)*(12);
+disp("Availiable diamter travel in diffuser in inches")
+disp(D_Diffuser_english_ss_avail_inches)
+disp("")
+disp("")
+
+%solving for the area available with .3ft travel in feet
+disp("Availiable area travel in diffuser in feet")
+A_Diffuser_english_ss_avail=(pi/4)*(D_Diffuser_english_ss_avail)^2 ; 
+disp(A_Diffuser_english_ss_avail)
+disp("")
+disp("")
+
+%solving for the area avilable with .3ft travel in meters
+disp("Availiable area travel in diffuser in meters")
+A_Diffuser_ss_avail=A_Diffuser_english_ss_avail/(3.281*3.281);
+disp(A_Diffuser_ss_avail)
+disp("")
+disp("")
+
+%solving area ratio between ideal and availiable
+disp("this is the area ratio between optimal and what is availiable with given travel")
+a_star_ratio_diffuser=A_Diffuser_english_ss_avail/A_Diffuser_english_ss;
+disp(a_star_ratio_diffuser)
+disp("")
+disp("")
+
+%solving for mach number at throat
+k=input("select value slightly larger then A_star_ratio_diffuser in command window  to get supersonic case in diffuser throat between A* theoretical and A* Possiable");
+Mach_in_diffuser_throat_ss=fzero(@l,k);
+disp("This is the Mach number exiting the throat of the diffuser the Diffuser")
+disp(Mach_in_diffuser_throat_ss)
+disp("")
+disp("")
+
+%solving for mach number after the shock occurs
+Mach_after_shock_diffuser=sqrt((1+((gamma-1)/(2))*Mach_in_diffuser_throat_ss^2)/(gamma*Mach_in_diffuser_throat_ss^2-((gamma-1)/(2))));
+disp("this is the mach number after the shock in the diffuser")
+disp(Mach_after_shock_diffuser)
+disp("")
+disp("")
+
+%solving for the change in total pressure ratio across shock 
+Total_pressure_ratio_diffuser_exit=(((gamma+1)*Mach_in_diffuser_throat_ss^2)/((gamma-1)*Mach_in_diffuser_throat_ss^2+2))^((gamma)/(gamma-1))*(((gamma+1)/(2*gamma*Mach_in_diffuser_throat_ss^2-(gamma-1))))^((1)/(gamma-1));
+Po_Diffuser_exit=Total_pressure_ratio_diffuser_exit*Po2_ss;
+Delta_Po=Po2_ss-Po_Diffuser_exit;
+disp("this is the change in total pressure across the diffuser at steady state in pa")
+disp(Delta_Po)
+disp("")
+disp("")
+
+%converting pascals to psi
+disp("this is the change in total pressure across the diffuser at steady state in psi")
+Delta_Po_english=Delta_Po*0.0001450377;
+disp(Delta_Po_english)
+disp("")
+disp("")
+
+%solving for Exit Mach number 
+disp("this is the mach number exiting the diffuser at steady state")
+Mach_leaving_Diffuser=fzero(@b,k);
+disp(Mach_leaving_Diffuser)
+
+%solving for the Tempature after the shock in the throat of the diffuser
+disp("this is the Tempature of the fluid leaving the Diffuser in kelvin")
+T_Diffuser_exit=To/((1+(((gamma-1)/2)*Mach_leaving_Diffuser^2)));
+disp(T_Diffuser_exit)
+disp("")
+disp("")
+
+%solving for the velocity in m/s after the shock in the throat of the
+%diffuser
+disp("This is the velocity in diffuser in meters per second" )
+Velocity_Diffuser=Mach_leaving_Diffuser*sqrt(gas_constant*gamma*T_Diffuser_exit);
+disp(Velocity_Diffuser)
+disp("")
+disp("")
+
+%solving for the velocity in ft/s after the shock in the throat of the
+%difusser
+%3.28084 is a conversion factor between meters and feet
+Velocity_Diffuser_english=Velocity_Diffuser*(3.28084);
+disp("this is the velocity of diffuser in ft/s")
+disp(Velocity_Diffuser_english)
+disp("")
+disp("")
+
+%solving for the mach number entering the wind tunnel 
+x=input("if subsonic case press .1 if supersonic case 5");
+Mach_enterance=fzero(@e,x);
+disp("this is Mach number at enterance to nozzle")
+disp(Mach_enterance)
+disp("")
+disp("")
+
+%solving for the tempature entering the wind tunnel 
+disp("This is the Tempature of the fluid entering the nozzle in kelvin")
+T_nozzle_i=To/(1+(((gamma-1)/(2))*Mach_enterance^2));
+disp(T_nozzle_i)
+disp("")
+disp("")
+
+%solving for the work done with tempature average
+W=((m_dot*(((gamma*gas_constant)/(gamma-1))*((T_Diffuser_exit+T_nozzle_i)/2))))/1000;
+disp("this is the work being done in kw")
+disp(W);
+disp("")
+disp("")
+
+%solving total cost 
+cost=W*h*price;
+disp("this is the cost to run the wind tunnel for one hour")
+disp(cost)
+disp("")
+disp("")
+
+function y=l(Mach_in_Diffuser_throat_ss)
+global gamma
+global a_star_ratio_diffuser
+y=(1/Mach_in_Diffuser_throat_ss^2)*(((2/(gamma+1)))*(1+(((gamma-1)/(2))*Mach_in_Diffuser_throat_ss^2)))^((gamma+1)/(gamma-1))-(a_star_ratio_diffuser)^2;
+end
+
+function y=b(Mach_leaving_Diffuser)
+global gamma
+global Ae
+global A_Diffuser_ss_avail
+y=(1/Mach_leaving_Diffuser^2)*(((2/(gamma+1)))*(1+(((gamma-1)/(2))*Mach_leaving_Diffuser^2)))^((gamma+1)/(gamma-1))-(Ae/A_Diffuser_ss_avail)^2;
+end
+
+function y=e(Mach_enterance)
+global gamma
+global Ae
+global A_nozzle
+y=(1/Mach_enterance^2)*(((2/(gamma+1)))*(1+(((gamma-1)/(2))*Mach_enterance^2)))^((gamma+1)/(gamma-1))-(Ae/A_nozzle)^2;
+end
